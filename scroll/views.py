@@ -155,7 +155,7 @@ import random
 @login_required
 def get_weather(request):
     # 1. Configuration
-    TEST_MODE = True 
+    TEST_MODE = False 
     
     # 2. Logic (Get lat/lon for the is_local check)
     lat = request.GET.get('lat')
