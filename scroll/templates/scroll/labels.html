@@ -1,0 +1,30 @@
+{% extends "scroll/base.html" %}
+
+{% block content %}
+<div class="py-6 min-h-screen">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-hidden">
+        {% for label in labels %}
+        <a href="{% url 'index' %}?q={{ label.name }}"
+            class="group p-6 bg-zinc-300 rounded-lg hover:bg-zinc-100 transition-all flex justify-between items-center">
+            <div>
+                <span class="text-xs text-black block mb-1 uppercase">Label Name</span>
+                <span class="text-sm font-bold text-black group-hover:text-zinc-600 transition-colors">
+                    {{ label.name }}
+                </span>
+            </div>
+            <div class="text-zinc-800 group-hover:text-zinc-500 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14m-7-7 7 7-7 7" />
+                </svg>
+            </div>
+        </a>
+        {% empty %}
+        <div class="bg-black p-20 text-center col-span-2">
+            <p class="mono text-[10px] text-zinc-600 uppercase tracking-widest">No labels...</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

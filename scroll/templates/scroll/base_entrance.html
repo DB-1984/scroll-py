@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scroll</title>
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:ital,wght@1,900&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .serif-italic {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 900;
+    }
+  </style>
+</head>
+
+<body
+  class="min-h-screen min-h-screen bg-white text-white bg-gradient-to-r from-slate-900 to-slate-700 selection:bg-white selection:text-black text-white selection:bg-white selection:text-black">
+
+  <div class="flex flex-col items-center justify-center min-h-screen p-6 md:p-12 space-y-4">
+
+    <div
+      class="w-full max-w-[380px] bg-white text-black p-8 md:p-10 space-y-6 rounded animate-in fade-in zoom-in-95 duration-700">
+      <div class="flex items-baseline gap-4 justify-center">
+        <h1 class="text-4xl font-black tracking-tighter">
+          Scroll
+        </h1>
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="black"
+          class="w-6 h-6 text-zinc-400 animate-pulse transition-transform duration-500 transform-gpu">
+          <path
+            d="M2 4a2 2 0 0 1 2-2h8a2 2 0 1 1 0 4H4a2 2 0 0 1-2-2ZM2 9.25a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 9.25ZM2.75 12.5a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5H2.75Z" />
+        </svg>
+      </div>
+      <p class="text-center text-sm text-zinc-950 tracking-tight">
+        Capture, tag, and search ideas...
+      </p>
+
+      {% block content %}{% endblock %}
+
+    </div>
+
+
+  </div>
+
+</body>
+
+</html>

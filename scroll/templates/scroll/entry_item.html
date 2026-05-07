@@ -1,0 +1,73 @@
+<div id="entry-{{ entry.id }}"
+    class="relative flex gap-1 md:gap-4 p-4 rounded group shadow-lg transition-colors hover:bg-zinc-50">
+
+    <div
+        class="w-6 h-6 md:w-10 md:h-10 rounded-full bg-zinc-100 border border-zinc-200 flex-shrink-0 flex items-center justify-center text-[10px] mono text-zinc-500">
+        {{ entry.user.username|slice:":1"|upper }}
+    </div>
+
+    <div class="flex-grow">
+        <div class="flex justify-between items-start mb-1">
+            <span class="text-sm font-bold text-black">{{ entry.user.username }}</span>
+            <span class="mono text-[10px] text-zinc-400 uppercase tracking-tighter">
+                {{ entry.created_at|date:"M d" }} &bull; {{ entry.created_at|date:"H:i" }}
+            </span>
+        </div>
+
+        <p class="text-xs md:text-base leading-relaxed text-zinc-800 selection:bg-black selection:text-white">
+            {{ entry.body }}
+        </p>
+
+        <div class="mt-12 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                {% if entry.label %}
+                <a href="{% url 'index' %}?q={{ entry.label.name }}"
+                    class="text-[10px] font-bold text-white bg-black px-2 py-1 rounded hover:bg-zinc-800 transition-all">
+                    #{{ entry.label.name }}
+                </a>
+                {% endif %}
+
+                <div class="flex items-center gap-3 opacity-1 group-hover:opacity-100 transition-opacity duration-200">
+                    <button hx-get="{% url 'edit_entry' entry.id %}" hx-target="#entry-{{ entry.id }}"
+                        hx-swap="outerHTML" class="text-zinc-400 hover:text-black transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                            <path d="m15 5 4 4" />
+                        </svg>
+                    </button>
+
+                    <button hx-delete="{% url 'delete_entry' entry.id %}" hx-target="#entry-{{ entry.id }}"
+                        hx-swap="outerHTML" hx-confirm="Delete permanent record?"
+                        class="text-zinc-400 hover:text-red-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6h18" />
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 group-hover:opacity-100 transition-opacity">
+                <span id="share-status-{{ entry.id }}" class="text-xs tracking-tighter text-black"></span>
+
+                <form hx-post="{% url 'share_entry' entry.id %}" hx-target="#share-status-{{ entry.id }}"
+                    hx-swap="innerHTML" hx-on::after-request="if(event.detail.successful) this.reset()"
+                    class="flex items-center gap-2">
+                    {% csrf_token %}
+                    <input type="email" name="email" placeholder="share@email.com"
+                        class="bg-transparent border-none text-xs text-black outline-none w-24 focus:w-40 transition-all placeholder:text-zinc-400">
+                    <button type="submit" class="text-zinc-400 hover:text-black transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
+                            <path d="m22 2-7 20-4-9-9-4Z" />
+                            <path d="M22 2 11 13" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

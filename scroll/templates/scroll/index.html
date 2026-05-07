@@ -1,0 +1,52 @@
+{% extends "scroll/base.html" %}
+
+{% block content %}
+<section class="mb-12">
+    {% if user.is_authenticated %}
+    <div class="mb-12 bg-slate-100/60 rounded shadow-lg p-4">
+        <div class="flex gap-4">
+            <div
+                class="w-6 h-6 md:w-10 md:h-10 rounded-full border bg-zinc-100 border-zinc-100 flex-shrink-0 flex items-center justify-center text-[10px] mono text-black">
+                {{ user.username|slice:":1"|upper }}
+            </div>
+            <form hx-post="{% url 'index' %}" hx-target="#timeline" hx-swap="afterbegin"
+                hx-on::after-request="this.reset()" class="flex-grow">
+                {% csrf_token %}
+
+                <div class="flex-grow min-h-[100px]">
+                    {{ entry_form.body }}
+                </div>
+
+                <div class="flex justify-between items-center mt-4 pt-4 border-t border-zinc-100/50">
+                    <div class="flex items-center gap-2">
+                        {{ entry_form.label_name }}
+                    </div>
+                    <button type="submit"
+                        class="bg-white text-[10px] font-black uppercase px-5 py-2 rounded-full hover:bg-zinc-200 transition-all">
+                        Post
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="relative group">
+        <div
+            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-600 group-focus-within:text-zinc-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+            </svg>
+        </div>
+        <input type="text" name="q" placeholder="Search..." hx-get="{% url 'index' %}"
+            hx-trigger="keyup changed delay:300ms" hx-target="#timeline"
+            class="pl-10 pr-4 bg-white/90 shadow-lg rounded border-slate-700 py-3 text-xs md:text-sm text-zinc-950 outline-none w-full focus:border-zinc-700 transition-all placeholder:text-black-40" />
+    </div>
+</section>
+
+<div id="timeline" class="space-y-4">
+    {% include 'scroll/partials/entry_list_partial.html' %}
+</div>
+{% endblock %}

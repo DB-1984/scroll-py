@@ -1,0 +1,28 @@
+<div id="entry-{{ entry.id }}">
+    <form hx-post="{% url 'edit_entry' entry.pk %}" hx-target="#entry-{{ entry.id }}" hx-swap="outerHTML"
+        class="bg-zinc-200 p-4 md:p-10 rounded-lg border border-zinc-200">
+        {% csrf_token %}
+
+        <textarea name="body"
+            class="w-full bg-transparent text-zinc-800 focus:ring-0 border-0 outline-none resize-none p-0 mb-2" rows="3"
+            required>{{ entry.body }}</textarea>
+
+        <div class="flex items-center gap-2 border-t border-zinc-200 pt-3 mt-1">
+            <span class="text-sm font-semibold text-zinc-600 pt-0.5">Label:</span>
+            <div class="flex-1">
+                {{ entry_form.label_name }}
+            </div>
+        </div>
+
+        <div class="flex justify-end gap-4 mt-4">
+            <button type="button" hx-get="{% url 'get_entry' entry.pk %}" hx-target="#entry-{{ entry.id }}"
+                hx-swap="outerHTML" class="text-xs font-black text-zinc-400 hover:text-zinc-600 tracking-tight">
+                Cancel
+            </button>
+
+            <button type="submit" class="text-xs font-black text-zinc-900 hover:underline tracking-tight">
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>

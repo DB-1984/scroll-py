@@ -1,0 +1,209 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scroll</title>
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:ital,wght@1,900&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+</head>
+
+<body class="min-h-screen selection:bg-black selection:text-black"
+  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+  <header class="lg:hidden sticky top-0 z-30 flex items-center justify-between bg-white/80 backdrop-blur-md px-6 py-4 border-b border-zinc-100">
+    <div class="flex items-center gap-2">
+      <h1 class="text-xl tracking-tighter text-black font-black">Scroll</h1>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="black" class="size-4">
+        <path d="M2 4a2 2 0 0 1 2-2h8a2 2 0 1 1 0 4H4a2 2 0 0 1-2-2ZM2 9.25a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 9.25ZM2.75 12.5a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5H2.75Z" />
+      </svg>
+    </div>
+    
+    <button onclick="toggleMenu()" class="p-2 -mr-2 text-black active:scale-90 transition-transform">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
+      </svg>
+    </button>
+  </header>
+
+  <div id="menu-backdrop" onclick="toggleMenu()"
+    class="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
+
+  <aside id="side-drawer"
+    class="fixed inset-y-0 left-0 w-64 bg-white/90 p-8 shadow-lg flex flex-col z-50 transform -translate-x-full lg:translate-x-0">
+    <div class="mb-12 flex items-center gap-2">
+      <h1 class="text-3xl tracking-tighter text-black font-black">Scroll</h1>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+        class="size-6 text-slate-900 text-black">
+        <path
+          d="M2 4a2 2 0 0 1 2-2h8a2 2 0 1 1 0 4H4a2 2 0 0 1-2-2ZM2 9.25a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 9.25ZM2.75 12.5a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5H2.75Z" />
+      </svg>
+    </div>
+    <nav class="flex-grow space-y-5">
+      <a href="{% url 'index' %}"
+        class="group flex items-center gap-2 transition-all duration-300 
+               {% if request.resolver_match.url_name == 'index' %}font-black text-black{% else %}font-semibold text-black/70 hover:text-black{% endif %}">
+
+        <svg class="w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-x-0.5" fill="currentColor"
+          viewBox="0 0 24 24">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+        </svg>
+
+        <span class="text-sm tracking-tight">Feed</span>
+      </a>
+
+      <a href="{% url 'labels' %}"
+        class="group flex items-center gap-2 transition-all duration-300 
+               {% if request.resolver_match.url_name == 'labels' %}font-black text-black{% else %}font-semibold text-black/70 hover:text-black{% endif %}">
+
+        <svg class="w-4 h-4 transform-gpu transition-transform duration-300 ease-out group-hover:translate-x-0.5"
+          fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path
+            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+
+        <span class="text-sm tracking-tight">Labels</span>
+      </a>
+    </nav>
+
+    <div class="mt-auto border-t border-zinc-100 pt-6">
+      <div class="flex items-center justify-between group">
+
+        <!-- User Profile Info -->
+        <div class="flex items-center gap-3">
+          {% if user.is_authenticated and user.socialaccount_set.all.0 %}
+          <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
+            class="w-8 h-8 rounded-full border border-zinc-200 shadow-sm transition-transform group-hover:scale-105">
+          {% else %}
+          <div
+            class="w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-[10px] font-black text-zinc-700 transition-colors group-hover:bg-zinc-200">
+            {{ user.username|slice:":1"|upper }}
+          </div>
+          {% endif %}
+
+          <div class="flex flex-col">
+            <span class="text-[11px] font-bold text-black uppercase tracking-tighter leading-none">{{ user.username }}</span>
+          </div>
+        </div>
+
+        <!-- Logout Action -->
+        {% if user.is_authenticated %}
+        <form action="{% url 'account_logout' %}" method="post" class="m-0">
+          {% csrf_token %}
+          <button type="submit"
+            class="p-2 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-500 transition-all active:scale-90"
+            title="Logout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" x2="9" y1="12" y2="12" />
+            </svg>
+          </button>
+        </form>
+        {% endif %}
+
+      </div>
+    </div>
+  </aside>
+
+  <main class="p-8 lg:ml-64 p-4 md:p-12 min-h-screen">
+    <div class="max-w-screen mx-auto 
+    flex flex-row flex-wrap justify-center items-start 
+    md:flex-nowrap 
+    xl:grid xl:grid-cols-12 gap-8 xl:gap-12">
+
+      <div class="xl:col-span-7 w-full max-w-[640px]">
+        <div id="entry-stream">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+
+      <aside class="xl:col-span-5 flex flex-col gap-6 xl:sticky xl:top-12 xl:self-start">
+
+        <div class="w-full mb-2">
+          <div id="weather-module" hx-trigger="location-ready" class="w-full transition-opacity duration-300">
+            <div class="animate-pulse bg-zinc-50 rounded-xl max-w-[500px] p-4 h-24"></div>
+          </div>
+        </div>
+
+        <div id="quote-module" hx-get="{% url 'get_quote' %}" hx-trigger="load"
+          class="bg-gradient-to-r text-white from-slate-900 max-w-[500px] to-slate-700 shadow-lg p-8 rounded-2xl flex flex-col justify-center min-h-[100px]">
+          <div class="animate-pulse h-4 w-3/4 bg-zinc-100 mx-auto rounded"></div>
+        </div>
+
+      </aside>
+
+    </div>
+  </main>
+
+  <script>
+    function toggleMenu() {
+      const drawer = document.getElementById('side-drawer');
+      const backdrop = document.getElementById('menu-backdrop');
+      const isHidden = drawer.classList.contains('-translate-x-full');
+      if (isHidden) {
+        drawer.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+        setTimeout(() => backdrop.classList.add('opacity-100'), 10);
+      } else {
+        drawer.classList.add('-translate-x-full');
+        backdrop.classList.remove('opacity-100');
+        setTimeout(() => backdrop.classList.add('hidden'), 300);
+      }
+    }
+    document.body.addEventListener('htmx:afterOnLoad', function (evt) {
+      if (evt.detail.xhr.status === 200 && (evt.detail.target.id === 'entry-stream' || evt.detail.target.id === 'entry-form-container')) {
+        const form = document.getElementById('entry-form');
+        if (form) form.reset();
+      }
+    });
+    function copyShareLink(url) {
+      const fullUrl = window.location.origin + url;
+      navigator.clipboard.writeText(fullUrl).then(() => {
+        const btn = event.currentTarget;
+        const originalColor = btn.style.color;
+        btn.style.color = '#000000';
+        setTimeout(() => btn.style.color = originalColor, 1000);
+      });
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      const weatherModule = document.getElementById('weather-module');
+      if (!weatherModule) return;
+
+      // Helper to fire the HTMX trigger
+      const fireHTMX = (lat, lon) => {
+        const url = `{% url 'get_weather' %}?lat=${lat}&lon=${lon}`;
+        weatherModule.setAttribute('hx-get', url);
+        // Process the new attribute and trigger the request
+        htmx.process(weatherModule);
+        htmx.trigger(weatherModule, 'location-ready');
+      };
+
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            fireHTMX(position.coords.latitude, position.coords.longitude);
+          },
+          (error) => {
+            console.warn("Geolocation blocked/failed, using defaults.");
+            fireHTMX('52.06', '-1.33'); // Default to Banbury
+          },
+          { timeout: 5000, maximumAge: 60000 } // 5s timeout, 1m cache
+        );
+      } else {
+        fireHTMX('52.06', '-1.33');
+      }
+    });
+
+  </script>
+</body>
+
+</html>
